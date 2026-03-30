@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Register</title>
+<style>
+body {
+    font-family: Arial;
+    background: #f2f6ff;
+    text-align: center;
+}
+.container {
+    margin-top: 80px;
+}
+.card {
+    display: inline-block;
+    width: 200px;
+    height: 150px;
+    margin: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px gray;
+    cursor: pointer;
+}
+.card:hover {
+    background: #e3f2fd;
+}
+</style>
+</head>
+<body>
+
+<h1>Register As</h1>
+
+<div class="container">
+    <div class="card" onclick="goUser()">User</div>
+    <div class="card" onclick="goNGO()">NGO</div>
+    <div class="card" onclick="goSpecialist()">Specialist</div>
+</div>
+
+<script>
+function goUser(){
+    window.location.href = "user_register.html";
+}
+function goNGO(){
+    window.location.href = "ngo_register.html";
+}
+function goSpecialist(){
+    window.location.href = "specialist_register.html";
+}
+</script>
+
+</body>
+</html>

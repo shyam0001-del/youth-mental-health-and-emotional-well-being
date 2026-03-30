@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+<style>
+body {
+    font-family: Arial;
+    background: linear-gradient(to right, #ff9a9e, #fad0c4);
+}
+.container {
+    width: 350px;
+    margin: 100px auto;
+    padding: 25px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px gray;
+    text-align: center;
+}
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px;
+}
+button {
+    padding: 10px 20px;
+    background: #2196F3;
+    color: white;
+    border: none;
+}
+a {
+    display: block;
+    margin-top: 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h2>Login - MindMitra</h2>
+
+<form onsubmit="loginUser(event)">
+<input id="email" placeholder="Email" required>
+<input id="password" type="password" placeholder="Password" required>
+<button type="submit">Login</button>
+</form>
+
+<a href="register.html">Create Account</a>
+</div>
+
+<script>
+async function loginUser(event){
+    event.preventDefault();
+
+    const user = {
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value
+    };
+
+    const res = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(user)
+    });
+
+    const role = await res.text();
+
+    if(role === "user"){
+        window.location.href = "student.html";
+    }
+    else if(role === "ngo"){
+        window.location.href = "ngo.html";
+    }
+    else if(role === "specialist"){
+        window.location.href = "specialist.html";
+    }
+    else{
+        alert(role);
+    }
+}
+</script>
+
+</body>
+</html>
