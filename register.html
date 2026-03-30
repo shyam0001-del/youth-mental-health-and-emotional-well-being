@@ -1,51 +1,160 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Register</title>
+<title>Login</title>
 <style>
 body {
     font-family: Arial;
-    background: #f2f6ff;
+    background-size: cover;
+    margin: 0;
+}
+
+/* Black title bar */
+.title-bar {
+    width: 100%;
+    background: black;
+    color: white;
     text-align: center;
+    padding: 15px;
+    font-size: 26px;
+    font-weight: bold;
 }
+
+/* Animated border */
+@keyframes borderGlow {
+    0% { border-color: #0d47a1; }
+    50% { border-color: #64b5f6; }
+    100% { border-color: #0d47a1; }
+}
+
+/* Transparent form container */
 .container {
-    margin-top: 80px;
-}
-.card {
-    display: inline-block;
-    width: 200px;
-    height: 150px;
-    margin: 20px;
-    padding: 20px;
-    background: white;
+    width: 350px;
+    margin: 120px auto 20px auto;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-    box-shadow: 0 0 10px gray;
-    cursor: pointer;
+    border: 3px solid #0d47a1;
+    animation: borderGlow 3s infinite;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    text-align: center;
+    backdrop-filter: blur(10px);
 }
-.card:hover {
-    background: #e3f2fd;
+
+/* Inputs */
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px;
+    border-radius: 5px;
+    border: none;
+    color: black;
+}
+
+/* Button */
+button {
+    padding: 10px 20px;
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+/* Link */
+a {
+    display: block;
+    margin-top: 10px;
+    color: black;
+}
+
+/* Image section */
+.role-section {
+    text-align: center;
+    margin-top: 40px;
+}
+
+/* Bigger card design */
+.role-card {
+    display: inline-block;
+    margin: 20px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.6);
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px black;
+    transition: transform 0.3s;
+}
+
+.role-card:hover {
+    transform: scale(1.08);
+}
+
+.role-card img {
+    width: 180px;
+    height: 180px;
+    border-radius: 10px;
+}
+
+.role-card p {
+    color: black;
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 10px;
 }
 </style>
 </head>
 <body>
 
-<h1>Register As</h1>
+<div class="title-bar">
+    MindMitra Login
+</div>
 
-<div class="container">
-    <div class="card" onclick="goUser()">User</div>
-    <div class="card" onclick="goNGO()">NGO</div>
-    <div class="card" onclick="goSpecialist()">Specialist</div>
+<div class="role-section">
+    <div class="role-card" onclick="window.location.href='user_register.html'">
+        <img src="images/stress.png">
+        <p>User</p>
+    </div>
+
+    <div class="role-card" onclick="window.location.href='ngo_register.html'">
+        <img src="images/ngo.webp">
+        <p>NGO</p>
+    </div>
+
+    <div class="role-card" onclick="window.location.href='specialist_register.html'">
+        <img src="images/doc2.avif">
+        <p>Specialist</p>
+    </div>
 </div>
 
 <script>
-function goUser(){
-    window.location.href = "user_register.html";
-}
-function goNGO(){
-    window.location.href = "ngo_register.html";
-}
-function goSpecialist(){
-    window.location.href = "specialist_register.html";
+async function loginUser(event){
+    event.preventDefault();
+
+    const user = {
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value
+    };
+
+    const res = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(user)
+    });
+
+    const role = await res.text();
+
+    if(role === "user"){
+        window.location.href = "user_register.html";
+    }
+    else if(role === "ngo"){
+        window.location.href = "ngo_register.html";
+    }
+    else if(role === "specialist"){
+        window.location.href = "specialist_register.html";
+    }
+    else{
+        alert(role);
+    }
 }
 </script>
 

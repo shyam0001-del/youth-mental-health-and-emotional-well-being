@@ -45,6 +45,7 @@ button {
 <div id="socialLinks">
 <input class="social" placeholder="Social Media Link">
 </div>
+
 <button type="button" class="add-btn" onclick="addSocial()">+ Add Social Link</button>
 
 <br>
@@ -59,7 +60,16 @@ button {
 
 <p>After registration, wait for Admin Approval.</p>
 </div>
+
 <script>
+function addSocial(){
+    const div = document.getElementById("socialLinks");
+    const input = document.createElement("input");
+    input.className = "social";
+    input.placeholder = "Social Media Link";
+    div.appendChild(input);
+}
+
 async function registerNGO(event){
     event.preventDefault();
 
@@ -70,6 +80,7 @@ async function registerNGO(event){
     formData.append("password", document.getElementById("password").value);
     formData.append("role", "ngo");
 
+    // Social links
     const socials = document.getElementsByClassName("social");
     let socialLinks = [];
     for(let i=0; i<socials.length; i++){
@@ -79,6 +90,7 @@ async function registerNGO(event){
     }
     formData.append("social", JSON.stringify(socialLinks));
 
+    // Certificate file
     const file = document.getElementById("certificate").files[0];
     if(file){
         formData.append("certificate", file);
@@ -93,5 +105,6 @@ async function registerNGO(event){
     window.location.href = "login.html";
 }
 </script>
+
 </body>
 </html>

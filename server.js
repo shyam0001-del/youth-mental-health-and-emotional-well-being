@@ -2,7 +2,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const multer = require("multer");
-const path = require("path");
 
 const app = express();
 
@@ -10,23 +9,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.static(__dirname));
-app.use('/uploads', express.static('uploads'));
 
 // MongoDB Connection
 mongoose.connect("mongodb://127.0.0.1:27017/MindMitra")
 .then(() => console.log("MongoDB Connected"))
 .catch(err => console.log(err));
 
-// Multer Storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-});
-
+// Multer Memory Storage (Store files in MongoDB)
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Schema
@@ -36,7 +26,10 @@ const UserSchema = new mongoose.Schema({
     password: String,
     role: String,
     social: [String],
-    certificate: String,
+    certificate: [{
+        data: Buffer,
+        contentType: String
+    }],
     specialization: String,
     status: {
         type: String,
@@ -46,13 +39,16 @@ const UserSchema = new mongoose.Schema({
 
 const User = mongoose.model("users", UserSchema);
 
-// Register with file upload
-app.post("/register", upload.single("certificate"), async (req, res) => {
+// Register
+app.post("/register", upload.array("certificate"), async (req, res) => {
     try {
         let data = req.body;
 
-        if(req.file){
-            data.certificate = req.file.filename;
+        if(req.files && req.files.length > 0){
+            data.certificate = req.files.map(f => ({
+                data: f.buffer,
+                contentType: f.mimetype
+            }));
         }
 
         if(typeof data.social === "string"){
@@ -74,7 +70,7 @@ app.post("/register", upload.single("certificate"), async (req, res) => {
     }
 });
 
-// Login
+// Login (UNCHANGED)
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
@@ -93,7 +89,7 @@ app.post("/login", async (req, res) => {
     res.send(user.role);
 });
 
-// Pending users for admin
+// Pending users
 app.get("/pending", async (req, res) => {
     const users = await User.find({
         role: { $in: ["ngo", "specialist"] },
@@ -101,6 +97,23 @@ app.get("/pending", async (req, res) => {
     });
 
     res.json(users);
+});
+
+// Serve Certificate
+app.get("/certificate/:id/:index", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        const index = parseInt(req.params.index);
+
+        if(user && user.certificate && user.certificate[index]){
+            res.set('Content-Type', user.certificate[index].contentType);
+            res.send(user.certificate[index].data);
+        } else {
+            res.status(404).send('Certificate not found');
+        }
+    } catch (err) {
+        res.status(500).send('Error');
+    }
 });
 
 // Approve
@@ -120,6 +133,15 @@ app.post("/reject", async (req, res) => {
 
     await User.findByIdAndDelete(id);
     res.send("Rejected");
+});
+
+// View certificate from MongoDB
+app.get("/certificate/:id/:index", async (req, res) => {
+    const user = await User.findById(req.params.id);
+    const cert = user.certificate[req.params.index];
+
+    res.contentType(cert.contentType);
+    res.send(cert.data);
 });
 
 app.listen(3000, () => {

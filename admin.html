@@ -12,7 +12,7 @@ body {
     border: 1px solid gray;
     margin: 15px auto;
     padding: 15px;
-    width: 320px;
+    width: 350px;
     border-radius: 10px;
     box-shadow: 0 0 5px gray;
     background: white;
@@ -50,7 +50,7 @@ async function loadPending(){
 
     users.forEach(u => {
 
-        // Make social links clickable
+        // Social Links clickable
         let socialHTML = "";
         if(u.social){
             u.social.forEach(link => {
@@ -61,10 +61,12 @@ async function loadPending(){
             });
         }
 
-        // Certificate clickable
+        // Certificates from MongoDB
         let certHTML = "";
         if(u.certificate){
-            certHTML = `<a href="/uploads/${u.certificate}" target="_blank">View Certificate</a>`;
+            u.certificate.forEach((c, i) => {
+                certHTML += `<a href="/certificate/${u._id}/${i}" target="_blank">View Certificate ${i+1}</a><br>`;
+            });
         }
 
         html += `
@@ -73,7 +75,7 @@ async function loadPending(){
             <p><b>Email:</b> ${u.email}</p>
             <p><b>Role:</b> ${u.role}</p>
             <p><b>Social Links:</b><br>${socialHTML}</p>
-            <p><b>Certificate:</b><br>${certHTML}</p>
+            <p><b>Certificates:</b><br>${certHTML}</p>
 
             <button class="approve" onclick="approve('${u._id}')">Approve</button>
             <button class="reject" onclick="reject('${u._id}')">Reject</button>
@@ -90,8 +92,6 @@ async function approve(id){
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify({id})
     });
-
-    alert("Approved");
     loadPending();
 }
 
@@ -101,12 +101,9 @@ async function reject(id){
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify({id})
     });
-
-    alert("Rejected");
     loadPending();
 }
 
-// Load pending users when page opens
 loadPending();
 </script>
 

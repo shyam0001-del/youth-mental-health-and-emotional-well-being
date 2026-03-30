@@ -5,39 +5,77 @@
 <style>
 body {
     font-family: Arial;
-    background: linear-gradient(to right, #ff9a9e, #fad0c4);
+    background: url("images/img1.png") no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
 }
+
+/* Black title bar */
+.title-bar {
+    width: 100%;
+    background: black;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+/* Animated border */
+@keyframes borderGlow {
+    0% { border-color: #0d47a1; }
+    50% { border-color: #64b5f6; }
+    100% { border-color: #0d47a1; }
+}
+
+/* Transparent form container */
 .container {
     width: 350px;
-    margin: 100px auto;
+    margin: 160px auto;
     padding: 25px;
-    background: white;
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-    box-shadow: 0 0 10px gray;
+    border: 3px solid #0d47a1;
+    animation: borderGlow 3s infinite;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
     text-align: center;
+    backdrop-filter: blur(10px);
 }
+
+/* Inputs */
 input {
     width: 90%;
     padding: 10px;
     margin: 8px;
+    border-radius: 5px;
+    border: none;
+    color: black;
 }
+
+/* Button */
 button {
     padding: 10px 20px;
     background: #2196F3;
     color: white;
     border: none;
+    border-radius: 5px;
 }
+
+/* Link */
 a {
     display: block;
     margin-top: 10px;
+    color: black;
 }
 </style>
 </head>
 <body>
 
-<div class="container">
-<h2>Login - MindMitra</h2>
+<div class="title-bar">
+    MindMitra Login
+</div>
 
+<div class="container">
 <form onsubmit="loginUser(event)">
 <input id="email" placeholder="Email" required>
 <input id="password" type="password" placeholder="Password" required>
